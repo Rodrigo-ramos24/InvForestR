@@ -69,18 +69,19 @@ ERaz <- function (yi, ai, Estrato, Conglomerado, AreasEstratos)
   BaseEstrato$Prom_ai <- (BaseEstrato$ai/BaseEstrato$NumCong)
   BaseEstrato$f <- 0
   BaseEstrato$f <- BaseEstrato$NumCong/BaseEstrato$AreaHa
-  BaseEstrato$Var <- ((1 - BaseEstrato$f)/(BaseEstrato$NumCong *
+  BaseEstrato$Var <- round(((1 - BaseEstrato$f)/(BaseEstrato$NumCong *
                                              (BaseEstrato$NumCong - 1) * BaseEstrato$Prom_ai^2)) *
     (BaseEstrato$yi2 - 2 * BaseEstrato$ERaz * BaseEstrato$yiai +
-       BaseEstrato$ai2 * (BaseEstrato$ERaz)^2)
+       BaseEstrato$ai2 * (BaseEstrato$ERaz)^2),8)
+
   BaseEstrato$SdERaz <- sqrt(((1 - BaseEstrato$f)/(BaseEstrato$NumCong *
                                                      (BaseEstrato$NumCong - 1) * BaseEstrato$Prom_ai^2)) *
                                (BaseEstrato$yi2 - 2 * BaseEstrato$ERaz * BaseEstrato$yiai +
                                   BaseEstrato$ai2 * (BaseEstrato$ERaz)^2))
-  BaseEstrato$Li <- BaseEstrato$ERaz - 2*BaseEstrato$SdERaz
-  BaseEstrato$Ls <- BaseEstrato$ERaz + 2*BaseEstrato$SdERaz
-  BaseEstrato$Error_muestreo <- (BaseEstrato$SdERaz/BaseEstrato$ERaz)
-  BaseEstrato$p95 <- ((BaseEstrato$SdERaz*qt(0.975, n-1))/BaseEstrato$ERaz)
-  BaseEstrato$p99 <- ((BaseEstrato$SdERaz*qt(0.995, n-1))/BaseEstrato$ERaz)
+  BaseEstrato$Li <- round(BaseEstrato$ERaz - 2*BaseEstrato$SdERaz,8)
+  BaseEstrato$Ls <- round(BaseEstrato$ERaz + 2*BaseEstrato$SdERaz,8)
+  BaseEstrato$Error_muestreo <- round((BaseEstrato$SdERaz/BaseEstrato$ERaz),8)
+  BaseEstrato$p95 <- round(((BaseEstrato$SdERaz*qt(0.975, n-1))/BaseEstrato$ERaz),8)
+  BaseEstrato$p99 <- round(((BaseEstrato$SdERaz*qt(0.995, n-1))/BaseEstrato$ERaz),8)
   as.data.frame(BaseEstrato)
 }
