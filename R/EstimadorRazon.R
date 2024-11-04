@@ -79,8 +79,8 @@ ERaz <- function (yi, ai, Estrato, Conglomerado, AreasEstratos)
                                   BaseEstrato$ai2 * (BaseEstrato$ERaz)^2))
   BaseEstrato$Li <- BaseEstrato$ERaz - 2*BaseEstrato$SdERaz
   BaseEstrato$Ls <- BaseEstrato$ERaz + 2*BaseEstrato$SdERaz
-  BaseEstrato$Error_muestreo <- paste((BaseEstrato$SdERaz/BaseEstrato$ERaz)*100, "%", sep = " ")
-  BaseEstrato$p95 <- ((BaseEstrato$SdERaz*qt(0.975, n-1))/BaseEstrato$ERaz)*100
-  BaseEstrato$p99 <- ((BaseEstrato$SdERaz*qt(0.995, n-1))/BaseEstrato$ERaz)*100
+  BaseEstrato$Error_muestreo <- (BaseEstrato$SdERaz/BaseEstrato$ERaz)
+  BaseEstrato$p95 <- ((BaseEstrato$SdERaz*qt(0.975, n-1))/BaseEstrato$ERaz)
+  BaseEstrato$p99 <- ((BaseEstrato$SdERaz*qt(0.995, n-1))/BaseEstrato$ERaz)
   as.data.frame(BaseEstrato)
 }
