@@ -85,3 +85,57 @@ ERaz <- function (yi, ai, Estrato, Conglomerado, AreasEstratos)
   BaseEstrato$p99 <- round(((BaseEstrato$SdERaz*qt(0.995, n-1))/BaseEstrato$ERaz),8)
   as.data.frame(BaseEstrato)
 }
+
+
+
+
+#' Muestreo aleatorio simple (MAS) para la estimación de inventario forestales
+#'
+#' @param Sitios Etiqueta de sitios muestreados
+#' @param VarInt Variable de interés para su estimación
+#' @param tamSit Tamaño del sitio en m2
+#' @param Superficie Area de estudio en ha
+#' @param ErrorDeseado Error de muestreo deseado (para determinar el tamaño de muestra) en porcentaje
+#'
+#' @return Estimación del inventario mediante muestreo aleatorio simple
+#'
+#' @import dplyr
+#'
+#' @export
+#'
+#' @examples
+#' #Datos de ejemplo
+#' Sitios <- c(1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4)
+#' VarInt <- c(0.0271,  0.0576,  0.0376,  0.0505,  3.4839,  0.0231,  0.0769,  0.045,  0.0147,  0.0136,  0.0114)
+#' tamSit <- 1000
+#' Superficie <- 400
+#' ErrorDeseado <- 0.1
+#'
+forestMAS <- function (Sitios, VarInt, tamSit, Superficie, ErrorDeseado) {
+  PropSit <- 10000/tamSit
+  data <- data.frame(Sitios = Sitios,
+                     VarInt = VarInt)
+  data.0 <- data %>%
+    group_by(Sitios) %>%
+    summarise(VarInt = sum(VarInt*PropSit, na.rm = TRUE),
+              NSit = n())
+
+  media <- mean(data.0$VarInt)
+  varianza <- var(data.0$VarInt)
+  varianza.med <- var(data.0$VarInt)/length(data.0$NSit)
+  IC.sup <- media + 2*sqrt(varianza.med)
+  IC.inf <- media - 2*sqrt(varianza.med)
+  EM <- 2*sqrt(varianza.med)/media
+  InvTo = media*Superficie
+
+  TamMue <- round((4*(Superficie^2)*varianza)/(((InvTo*ErrorDeseado)^2)+4*Superficie*varianza),0)
+
+  data.frame(NSit = length(data.0$NSit),
+             media,
+             varianza,
+             varianza.med,
+             IC.sup,
+             IC.inf,
+             EM,
+             MueSug = TamMue)
+}
