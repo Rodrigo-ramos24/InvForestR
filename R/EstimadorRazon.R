@@ -86,9 +86,6 @@ ERaz <- function (yi, ai, Estrato, Conglomerado, AreasEstratos)
   as.data.frame(BaseEstrato)
 }
 
-
-
-
 #' Muestreo aleatorio simple (MAS) para la estimación de inventario forestales
 #'
 #' @param Sitios Etiqueta de sitios muestreados
@@ -117,7 +114,7 @@ forestMAS <- function (Sitios, VarInt, tamSit, Superficie, ErrorDeseado) {
                      VarInt = VarInt)
   data.0 <- data %>%
     group_by(Sitios) %>%
-    summarise(VarInt = sum(VarInt*PropSit, na.rm = TRUE),
+    summarise(VarInt = sum_na(VarInt*PropSit),
               NSit = n())
 
   media <- mean(data.0$VarInt)
@@ -139,3 +136,10 @@ forestMAS <- function (Sitios, VarInt, tamSit, Superficie, ErrorDeseado) {
              EM,
              MueSug = TamMue)
 }
+
+
+
+
+
+
+
