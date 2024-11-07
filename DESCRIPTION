@@ -1,10 +1,10 @@
 Package: InvForestR
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Estimación de inventario forestal mediante diferentes técnicas de muestreo
+Version: 1.0
 Authors@R: 
     person("Rodrigo", "Ramos-Madrigal", , "ramosmadrigal@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0009-0002-3462-3815"))
-Description: What the package does (one paragraph).
+Description: La librería InvForestT contiene las principales funciones empleadas en la estimación de inventarios forestales, tales como el muestreo aleatorio simple (MAS) y el estimador de razón o proporción (ERaz).
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
