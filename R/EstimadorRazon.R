@@ -5,6 +5,8 @@
 #' @return El resultado de la suma con omision de NA
 #' @export
 #'
+#' @name sum_na
+#'
 #' @examples
 #' sum_na(x = c(34, 20, NA, 2))
 
@@ -23,10 +25,12 @@ sum_na <- function(x){
 #'
 #' @return Estimadores de razón para los estratos correspondientes
 #'
-#' @import stats
+#' @importFrom stats qt
 #' @import dplyr
 #'
 #' @export
+#'
+#' @name forestERaz
 #'
 #' @examples
 #' # Datos de ejemplo
@@ -105,8 +109,11 @@ forestERaz <- function (yi, ai, Estrato, Conglomerado, AreasEstratos)
 #' @return Estimación del inventario mediante muestreo aleatorio simple
 #'
 #' @import dplyr
+#' @importFrom stats var
 #'
 #' @export
+#'
+#' @name forestMAS
 #'
 #' @examples
 #' #Datos de ejemplo
