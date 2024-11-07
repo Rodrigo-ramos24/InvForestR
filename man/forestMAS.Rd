@@ -26,7 +26,8 @@ Muestreo aleatorio simple (MAS) para la estimación de inventario forestales
 \examples{
 #Datos de ejemplo
 Sitios <- c(1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4)
-VarInt <- c(0.0271,  0.0576,  0.0376,  0.0505,  3.4839,  0.0231,  0.0769,  0.045,  0.0147,  0.0136,  0.0114)
+VarInt <- c(0.0271,  0.0576,  0.0376,  0.0505,  3.4839,  0.0231,  0.0769,
+0.045,  0.0147,  0.0136,  0.0114)
 tamSit <- 1000
 Superficie <- 400
 ErrorDeseado <- 0.1

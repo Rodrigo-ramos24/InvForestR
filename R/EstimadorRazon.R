@@ -23,8 +23,8 @@ sum_na <- function(x){
 #'
 #' @return Estimadores de razón para los estratos correspondientes
 #'
-#' @import doBy
 #' @import stats
+#' @import dplyr
 #'
 #' @export
 #'
@@ -38,19 +38,19 @@ sum_na <- function(x){
 #'                              AreaHa = c(10, 20, 15)) # Superficies en ha
 #'
 #' # Llamada a la función
-#' resultado <- ERaz(yi, ai, Estrato, Conglomerado, AreasEstratos)
+#' resultado <- forestERaz(yi, ai, Estrato, Conglomerado, AreasEstratos)
 #' print(resultado)
 #'
-ERaz <- function (yi, ai, Estrato, Conglomerado, AreasEstratos)
+utils::globalVariables(c("NumSitios", "contadorCong", "yi2", "yiai", "ai2"))
+forestERaz <- function (yi, ai, Estrato, Conglomerado, AreasEstratos)
 {
   n = length(yi)
   contadorSitios = rep(1, n)
   EstCong <- paste(as.character(Estrato), "-", as.character(Conglomerado))
   tmp = data.frame(yi, ai, contadorSitios, EstCong)
-  BaseT1cong <- summaryBy(yi + ai + contadorSitios ~ EstCong,
-                          data = tmp, FUN = sum_na, keep.names = TRUE, var.names = c("yi",
-                                                                                     "ai",
-                                                                                     "NumSitios"))
+
+  BaseT1cong <- tmp %>% group_by(EstCong) %>% summarise(yi = sum_na(yi), ai = sum_na(ai), NumSitios = sum_na(contadorSitios))
+
   BaseT1cong$Estrato <- substr(x = BaseT1cong$EstCong, start = 1,
                                stop = as.integer(gregexpr("-", BaseT1cong$EstCong)) -
                                  2)
@@ -59,10 +59,17 @@ ERaz <- function (yi, ai, Estrato, Conglomerado, AreasEstratos)
   BaseT1cong$ai2 <- (BaseT1cong$ai)^2
   BaseT1cong$contadorCong <- 1
   BaseEstrato <- 0
-  BaseEstrato <- summaryBy(NumSitios + contadorCong + yi +
-                             ai + yi2 + yiai + ai2 ~ Estrato, data = BaseT1cong, FUN = sum_na,
-                           keep.names = TRUE, var.names = c("NumSitios", "NumCong",
-                                                            "yi", "ai", "yi2", "yiai", "ai2"))
+
+  BaseEstrato <- BaseT1cong %>%
+    group_by(Estrato) %>%
+    summarise(NumSitios = sum_na(NumSitios),
+              NumCong = sum_na(contadorCong),
+              yi = sum_na(yi),
+              ai = sum_na(ai),
+              yi2 = sum_na(yi2),
+              yiai = sum_na(yiai),
+              ai2 = sum_na(ai2))
+
   BaseEstrato <- merge(BaseEstrato, AreasEstratos, by.x = "Estrato",
                        by.y = "Estrato", all = FALSE)
   BaseEstrato$ERaz <- BaseEstrato$yi/BaseEstrato$ai
@@ -70,9 +77,9 @@ ERaz <- function (yi, ai, Estrato, Conglomerado, AreasEstratos)
   BaseEstrato$f <- 0
   BaseEstrato$f <- BaseEstrato$NumCong/BaseEstrato$AreaHa
   BaseEstrato$Var <- round(((1 - BaseEstrato$f)/(BaseEstrato$NumCong *
-                                             (BaseEstrato$NumCong - 1) * BaseEstrato$Prom_ai^2)) *
-    (BaseEstrato$yi2 - 2 * BaseEstrato$ERaz * BaseEstrato$yiai +
-       BaseEstrato$ai2 * (BaseEstrato$ERaz)^2),8)
+                                                   (BaseEstrato$NumCong - 1) * BaseEstrato$Prom_ai^2)) *
+                             (BaseEstrato$yi2 - 2 * BaseEstrato$ERaz * BaseEstrato$yiai +
+                                BaseEstrato$ai2 * (BaseEstrato$ERaz)^2),8)
 
   BaseEstrato$SdERaz <- sqrt(((1 - BaseEstrato$f)/(BaseEstrato$NumCong *
                                                      (BaseEstrato$NumCong - 1) * BaseEstrato$Prom_ai^2)) *
@@ -85,6 +92,7 @@ ERaz <- function (yi, ai, Estrato, Conglomerado, AreasEstratos)
   BaseEstrato$p99 <- round(((BaseEstrato$SdERaz*qt(0.995, n-1))/BaseEstrato$ERaz),8)
   as.data.frame(BaseEstrato)
 }
+
 
 #' Muestreo aleatorio simple (MAS) para la estimación de inventario forestales
 #'
@@ -103,7 +111,8 @@ ERaz <- function (yi, ai, Estrato, Conglomerado, AreasEstratos)
 #' @examples
 #' #Datos de ejemplo
 #' Sitios <- c(1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4)
-#' VarInt <- c(0.0271,  0.0576,  0.0376,  0.0505,  3.4839,  0.0231,  0.0769,  0.045,  0.0147,  0.0136,  0.0114)
+#' VarInt <- c(0.0271,  0.0576,  0.0376,  0.0505,  3.4839,  0.0231,  0.0769,
+#' 0.045,  0.0147,  0.0136,  0.0114)
 #' tamSit <- 1000
 #' Superficie <- 400
 #' ErrorDeseado <- 0.1
